@@ -16,6 +16,10 @@ export const fetchAuthMe = createAsyncThunk('auth/fetchAuthMe', async () => {
     const {data} = await axios.get('/auth/me')
     return data
 })
+export const fetchUpdateMe = createAsyncThunk('auth/fetchUpdateMe', async (fields) => {
+    const {data} = await axios.patch('/personal/edit', fields)
+    return data
+})
 
 
 const initialState = {
@@ -32,6 +36,8 @@ const authSlise = createSlice({
         }
     },
     extraReducers: {
+
+        // авторизация
         [fetchAuth.pending]: (state, action) => {
             state.status = 'loading'
             state.data = null
@@ -44,6 +50,8 @@ const authSlise = createSlice({
             state.status = 'error'
             state.data = null
         },
+
+        // проверка авторизации
         [fetchAuthMe.pending]: (state, action) => {
             state.status = 'loading'
             state.data = null
@@ -56,6 +64,8 @@ const authSlise = createSlice({
             state.status = 'error'
             state.data = null
         },
+
+        // регистрация
         [fetchRegister.pending]: (state, action) => {
             state.status = 'loading'
             state.data = null
@@ -65,6 +75,24 @@ const authSlise = createSlice({
             state.data = action.payload
         },
         [fetchRegister.rejected]: (state, action) => {
+            state.status = 'error'
+            state.data = null
+        },
+
+        // изменение данных аккаунта
+        // [fetchUpdateMe.pending]: (state, action) => {
+        //     state.status = 'loading'
+        //     state.data = null
+        // },
+        [fetchUpdateMe.fulfilled]: (state, action) => {
+            state.status = 'loaded'
+            // const data = state.data
+            // debugger
+            
+            state.data = {...state.data, ...action.meta.arg}
+            // debugger
+        },
+        [fetchUpdateMe.rejected]: (state, action) => {
             state.status = 'error'
             state.data = null
         },
