@@ -3,6 +3,9 @@
   padding: 10px 0;
   border-bottom: 1px solid #e0e0e0;
   margin-bottom: 30px;
+  a {
+    text-decoration: none;
+  }
 }
 
 .inner {
@@ -20,10 +23,11 @@
   border-radius: 5px;
   padding: 0 10px;
   text-decoration: none;
+  // margin: 0 auto;
 
-  &:hover {
-    background-color: #4361ee;
-  }
+  // &:hover {
+  //   background-color: #4361ee;
+  // }
 }
 
 .buttons {
@@ -34,4 +38,8 @@
   a {
     text-decoration: none;
   }
+}
+
+a {
+  text-decoration: none;
 }

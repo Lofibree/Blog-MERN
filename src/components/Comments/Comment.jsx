@@ -7,7 +7,7 @@ import Divider from "@mui/material/Divider";
 import Skeleton from "@mui/material/Skeleton";
 import { Link } from 'react-router-dom'
 import IconButton from '@mui/material/IconButton';
-import DeleteIcon from '@mui/icons-material/Clear';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch, useSelector } from "react-redux";
 import { removeComment } from '../../redux/slices/comments';
 import { Button, TextField } from '@mui/material';
