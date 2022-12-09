@@ -1,46 +1,46 @@
-import { Avatar, Button, Grid, Link, TextField } from '@mui/material';
-import React from 'react';
-import { Typography } from '@mui/material';
+import { Avatar, Button, TextField } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Typography, Box, Skeleton } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './PersonalAcc.module.scss'
-import { useState } from 'react';
 import { fetchAuthMe, fetchUpdateMe } from '../../redux/slices/auth';
-import { useEffect } from 'react';
-import {Box} from '@mui/material';
-import {Skeleton} from '@mui/material';
-// import LoadingButton from '@mui/';
+import {useLocation} from 'react-router-dom'
+
 
 const PersonalAcc = () => {
 
+    // const location = useLocation()
     useEffect(() => {
-        dispatch(fetchAuthMe())
+        // if ( location.path === '/personal/me' ) {
+            dispatch(fetchAuthMe())
+        // } 
+        // if ( location.path === '/personal/' ) {
+        //     dispatch(fetchAuthMe())
+        // } 
+
     }, [])
+
     const dispatch = useDispatch()
     const userData = useSelector(state => state.auth.data)
     const [isEdit, setIsEdit] = useState(false)
     const [valueUrl, setValueUrl] = useState('')
     const [valueName, setValueName] = useState('')
 
-   
-    const editProfile = () => {
-        setIsEdit(true)
-    }
+
+    const editProfile = () => setIsEdit(true)
     const onSubmit = () => {
         setIsEdit(false)
         const fields = {
+            fullName: valueName,
             avatarUrl: valueUrl
         }
         dispatch(fetchUpdateMe(fields))
     }
-    const handleOnChange = (e) => {
-        setValueUrl(e.target.value)
-    }
-    const handleCancel = (e) => {
-        setIsEdit(false)
-    }
+    const handleOnChangeUrl = e => setValueUrl(e.target.value)
+    const handleOnChangeName = e => setValueName(e.target.value)
+    const handleCancel = e => setIsEdit(false)
 
     return (
-        // <Grid container spacing={2}>
         <div className={styles.container}>
             <div className={styles.profileBox}>
                 <div>
@@ -67,19 +67,19 @@ const PersonalAcc = () => {
                     ?
                     <>
                         <TextField
-                            // helperText="Новая ссылка"
+                            sx={{ m: 2 }}
                             variant="standard"
-                            // placeholder="Заголовок статьи..."
                             label="Новая ссылка на изображение"
                             value={valueUrl}
-                            onChange={handleOnChange}
+                            onChange={handleOnChangeUrl}
                             fullWidth
                         />
                         <TextField
+                            sx={{ m: 2 }}
                             variant="standard"
                             label="Новое имя пользователя"
                             value={valueName}
-                            onChange={handleOnChange}
+                            onChange={handleOnChangeName}
                             fullWidth
                         />
                         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -91,7 +91,6 @@ const PersonalAcc = () => {
                 }
             </div>
         </div>
-        // </Grid>
     );
 };
 

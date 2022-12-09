@@ -25,6 +25,6 @@
 
 ## Functionality 
 
-Authorization, CRUD posts, CRUD comments, filter by tags, change user data.    
+Authorization; CRUD posts, comments; filter by tags, cretaion date, popularity; change user data.    
 
 

@@ -41,7 +41,7 @@ function App() {
           <Route path="/add-post" element={<AddPost />}/>
           <Route path="/login" element={<Login />}/>
           <Route path="/register" element={<Registration />}/>
-          <Route path="/personal" element={<PersonalAcc />}/>
+          <Route path="/personal/me" element={<PersonalAcc />}/>
         </Routes>
       </Container>
     </>
