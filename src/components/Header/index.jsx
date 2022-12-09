@@ -10,11 +10,14 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import { useState } from 'react';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
+import { Avatar } from '@mui/material';
 
 
 export const Header = () => {
 
   const isAuth = useSelector(selectIsAuth)
+  const userData = useSelector(state => state.auth.data)
+
   const dispatch = useDispatch()
   const onClickLogout = () => {
     if (window.confirm('Вы точно хотите выйти?')) {
@@ -44,7 +47,7 @@ export const Header = () => {
           <div className={styles.buttons}>
             {isAuth
               ? (<>
-                <Button aria-controls="simple-menu" aria-haspopup="true" onClick={handleClick}>Меню</Button>
+                <Avatar src={userData.avatarUrl} alt="dfgdfg" sx={{ width: 35, height: 35 }} onClick={handleClick} className={styles.avatar}  />
                 <Menu
                   id="simple-menu"
                   anchorEl={anchorEl}

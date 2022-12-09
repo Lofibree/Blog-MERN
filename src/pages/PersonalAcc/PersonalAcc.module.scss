@@ -17,3 +17,18 @@
     margin-bottom: 20px;
     min-width: 300px;
 }
+.avatar {
+    width: 100px;
+    height: 100px;
+    transition: 0.2s ease;
+
+}
+
+.avatar:hover {
+    cursor: pointer;
+    box-shadow: 0 5px 15px 0px black;
+    transition: 0.2s ease;
+}
+.imgModal {
+    width: 600px;
+}

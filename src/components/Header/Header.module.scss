@@ -33,13 +33,20 @@
 .buttons {
   button {
     margin-left: 10px;
+    display: flex;
   }
-
+  display: flex;
   a {
     text-decoration: none;
   }
 }
-
+.avatar {
+  border: 1px black solid;
+}
+.avatar:hover {
+  cursor: pointer;
+  transition: 0.2s ease;
+}
 a {
   text-decoration: none;
 }

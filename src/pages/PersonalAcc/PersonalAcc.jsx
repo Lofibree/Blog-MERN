@@ -4,20 +4,12 @@ import { Typography, Box, Skeleton } from '@mui/material';
 import { useSelector, useDispatch } from 'react-redux';
 import styles from './PersonalAcc.module.scss'
 import { fetchAuthMe, fetchUpdateMe } from '../../redux/slices/auth';
-import {useLocation} from 'react-router-dom'
-
+import Modal from '@mui/material/Modal';
 
 const PersonalAcc = () => {
 
-    // const location = useLocation()
     useEffect(() => {
-        // if ( location.path === '/personal/me' ) {
-            dispatch(fetchAuthMe())
-        // } 
-        // if ( location.path === '/personal/' ) {
-        //     dispatch(fetchAuthMe())
-        // } 
-
+        dispatch(fetchAuthMe())
     }, [])
 
     const dispatch = useDispatch()
@@ -40,12 +32,41 @@ const PersonalAcc = () => {
     const handleOnChangeName = e => setValueName(e.target.value)
     const handleCancel = e => setIsEdit(false)
 
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 'fit-content',
+        bgcolor: 'background.paper',
+        border: '2px solid #000',
+        boxShadow: 24,
+        p: 2,
+      };
+
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+  
+
     return (
         <div className={styles.container}>
             <div className={styles.profileBox}>
                 <div>
                     {userData
-                        ? <Avatar src={userData.avatarUrl} sx={{ width: 100, height: 100 }} alt="dfgdfg" />
+                        ? <>
+                            <Modal
+                                open={open}
+                                onClose={handleClose}
+                                aria-labelledby="modal-modal-title"
+                                aria-describedby="modal-modal-description"
+                            >
+                                <Box sx={style}>
+                                    <img src={userData.avatarUrl} className={styles.imgModal}/>
+                                </Box>
+                            </Modal>
+                            <Avatar src={userData.avatarUrl} alt="dfgdfg" onClick={handleOpen} className={styles.avatar} />
+                        </>
                         : <Skeleton variant="circular" width={100} height={100} />
                     }
                 </div>

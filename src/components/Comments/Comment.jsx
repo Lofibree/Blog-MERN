@@ -88,13 +88,13 @@ const Comment = (obj, index, userId, isLoading) => {
               <>
                 <IconButton
                   onClick={() => handleUpdate(obj.obj.text)}
-                  color="secondary"
+                  color="primary"
                 >
                   <EditIcon />
                 </IconButton>
                 <IconButton
                   onClick={() => handleDelete(obj.obj.post._id, obj.obj._id)}
-                  color="secondary"
+                  color="error"
                 >
                   <DeleteIcon />
                 </IconButton>
