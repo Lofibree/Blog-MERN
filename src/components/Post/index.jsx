@@ -112,7 +112,7 @@ export const Post = ({
         />
       )}
       <div className={styles.wrapper}>
-        <UserInfo {...user} createdAt={createdAt} updatedAt={updatedAt} />
+        <UserInfo {...user} isEditable createdAt={createdAt} updatedAt={updatedAt} />
         <div className={styles.indention}>
           <h2 className={clsx(styles.title, { [styles.titleFull]: isFullPost })}>
             {isFullPost ? title : <Link to={`/posts/${id}`}>{title}</Link>}

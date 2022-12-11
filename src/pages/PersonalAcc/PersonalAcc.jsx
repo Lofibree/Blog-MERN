@@ -65,9 +65,9 @@ const PersonalAcc = () => {
                                     <img src={userData.avatarUrl} className={styles.imgModal}/>
                                 </Box>
                             </Modal>
-                            <Avatar src={userData.avatarUrl} alt="dfgdfg" onClick={handleOpen} className={styles.avatar} />
+                            <Avatar src={userData.avatarUrl} alt="dfgdfg" onClick={handleOpen} sx={{width: 150, height: 150}} className={styles.avatar} />
                         </>
-                        : <Skeleton variant="circular" width={100} height={100} />
+                        : <Skeleton variant="circular" width={150} height={150} />
                     }
                 </div>
                 <div >

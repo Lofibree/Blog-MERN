@@ -98,8 +98,8 @@ export const Home = () => {
           {
             (isPostsLoading ? [...Array(5)] : posts.items)
               .map((obj, index) => isPostsLoading
-                ? (<Post isLoading={true} key={index} />)
-                : (
+                ? <Post isLoading={true} key={index} />
+                : 
                   <Post
                     id={obj._id}
                     title={obj.title}
@@ -112,12 +112,12 @@ export const Home = () => {
                     tags={obj.tags}
                     isEditable={userData?._id === obj.user._id}
                   />
-                ))}
+                )}
         </Grid>
         <Grid xs={4} item>
           <>
             <TagsBlock items={tags.items} isLoading={isTagsLoading} title={tagsTitle} />
-            {userData?._id && <CommentsBlock items={lastComments.items} isLoading={isCommLoading} userId={userData?._id} />}
+            <CommentsBlock items={lastComments.items} isLoading={isCommLoading}  />
           </>
         </Grid>
       </Grid>

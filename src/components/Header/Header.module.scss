@@ -50,3 +50,22 @@
 a {
   text-decoration: none;
 }
+
+
+.menu {
+  display: block;
+}
+.menuBtns {
+  display: flex;
+}
+
+@media screen and (max-width: 900px) {
+  .menuBtns{
+    display: none;
+  }
+}
+// @media screen and (max-width: 00px) {
+//   .menuBtns{
+//     display: none;
+//   }
+// }

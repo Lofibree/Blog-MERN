@@ -10,22 +10,25 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectIsAuth } from "../../redux/slices/auth";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from '../../axios.js'
+import { Modal } from '@mui/material';
+import { Box } from '@mui/system';
+import { fetchCreatePost, fetchOnePost, fetchUpdatePost } from '../../redux/slices/posts';
 
 export const AddPost = () => {
 
 
+  const dispatch = useDispatch()
   const isAuth = useSelector(selectIsAuth)
+  const post = useSelector(state => state.posts.posts.items)
   const navigate = useNavigate()
   const { id } = useParams()
-
-  const [isLoading, setIsLoading] = React.useState(false);
   const [text, setText] = React.useState('');
   const [title, setTitle] = React.useState('');
   const [tags, setTags] = React.useState('');
   const [imageUrl, setImageUrl] = React.useState('');
   const [inputUrl, setInputUrl] = React.useState('');
+  const [open, setOpen] = React.useState(false);
   const inputFileRef = useRef(null)
-
   const isEditing = Boolean(id)
 
   const handleChangeFile = async (event) => {
@@ -36,6 +39,7 @@ export const AddPost = () => {
       const { data } = await axios.post('upload', formData)
       console.log(data)
       setImageUrl(data.url)
+      handleClose()
     } catch (err) {
       console.warn(err)
       alert('Ошибка при загрузке файла')
@@ -43,24 +47,25 @@ export const AddPost = () => {
   };
 
   const onClickRemoveImage = () => setImageUrl('')
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
-  const onChange = React.useCallback((value) => {
-    setText(value);
-  }, []);
+  const onChange = React.useCallback((value) => {setText(value)}, []);
 
   const onSubmit = async () => { // мб сделать через redux
     try {
-      setIsLoading(true)
       const fields = {
         title,
         imageUrl,
         tags: tags.split(',').filter(t => ((t.indexOf(' ') === -1) && (t.indexOf(',') === -1))), // исключаю теги с лишней ',' и пробелом
         text
       }
-      const { data } = isEditing
-        ? await axios.patch(`/posts/${id}`, fields)
-        : await axios.post('/posts', fields)
-      const _id = isEditing ? id : data._id
+      if (isEditing) {
+        dispatch(fetchUpdatePost(id, fields))
+      } else if(!isEditing) {
+        dispatch(fetchCreatePost(fields))
+      }
+      const _id = isEditing ? id : post._id
       navigate(`/posts/${_id}`)
     } catch (err) {
       console.warn(err)
@@ -70,17 +75,19 @@ export const AddPost = () => {
 
   useEffect(() => {
     if (id) {
-      axios.get(`/posts/${id}`).then(({ data }) => {
-        setTitle(data.title)
-        setText(data.text)
-        setImageUrl(data.imageUrl)
-        setTags(data.tags.join(','))
-      }).catch(err => {
+      try {
+        dispatch(fetchOnePost(id))
+        setTitle(post ? post.title : '')
+        setText(post ? post.text : '')
+        setImageUrl(post ? post.imageUrl : '')
+        setTags(post ? post.tags.join(',') : '')  
+      } catch (err) {
         console.warn(err)
         alert('Ошибка при получении статьи')
-      })
+      }
     }
   }, [])
+
   const options = React.useMemo(() => ({
       spellChecker: false,
       maxHeight: '400px',
@@ -97,23 +104,54 @@ export const AddPost = () => {
     return <Navigate to='/posts/new' />
   }
 
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '500px',
+    height: '220px',
+    minWidth: 'fit-content',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    borderRadius: '10px',
+    boxShadow: 24,
+    p: 2,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
+  };
+
+
 
   return (
     <Paper style={{ padding: 30 }}>
-      <Button variant="outlined" sx={{ mr: 5}} size="large" onClick={() => inputFileRef.current.click()}>
+      <Button variant="outlined" sx={{ mr: 5 }} size="large" onClick={handleOpen}>
         Загрузить превью
       </Button>
-      <span>или</span>
-      <TextField
-        label="Ссылка на изображение"
-        sx={{ml: 5, mr: 5, width: 200}}
-        variant="standard"
-        value={inputUrl}
-        onChange={(e) => setInputUrl(e.target.value)}
-      />
-      <Button variant="outlined" size="small" sx={{width: 70, fontSize: 10}} onClick={() => setImageUrl(inputUrl)}>
-        Загрузить по ссылке
-      </Button>
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Button variant="outlined" sx={{mb: 3}} size="large" onClick={() => inputFileRef.current.click()}>
+            Выбрать с ПК
+          </Button>
+          <span>или</span>
+          <TextField
+            label="Ссылка на изображение"
+            sx={{ width: 400 }}
+            variant="standard"
+            value={inputUrl}
+            onChange={(e) => setInputUrl(e.target.value)}
+          />
+          <Button variant="outlined" size="small" sx={{mt: 2}} onClick={() => setImageUrl(inputUrl)}>
+            Загрузить по ссылке
+          </Button>
+        </Box>
+      </Modal>
       <input type="file" onChange={handleChangeFile} ref={inputFileRef} hidden />
       {imageUrl && (
         <>

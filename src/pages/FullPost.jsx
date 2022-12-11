@@ -47,7 +47,7 @@ export const FullPost = () => {
       <Post
         id={data._id}
         title={data.title}
-        imageUrl={data.imageUrl.indexOf('http') !== -1 ? data.imageUrl : `http://localhost:4000${data.imageUrl}`}
+        imageUrl={data.imageUrl ? data.imageUrl : ''}
         user={data.user}
         createdAt={data.createdAt.split('T')}
         updatedAt={data.updatedAt.split('T')}
@@ -58,8 +58,8 @@ export const FullPost = () => {
       >
         <p>{data.text}</p>
       </Post>
-      <CommentsBlock items={comments} isLoading={isLoading} userId={userData?._id }>
-        {isAuth && <AddComment id={id} />}
+      <CommentsBlock items={comments} isLoading={isLoading}>
+        {isAuth && <AddComment id={id} isAuth />}
       </CommentsBlock>
     </>
   );

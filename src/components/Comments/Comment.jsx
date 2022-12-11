@@ -10,13 +10,13 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch, useSelector } from "react-redux";
 import { removeComment } from '../../redux/slices/comments';
-import { Button, TextField } from '@mui/material';
+import { Badge, Button, TextField } from '@mui/material';
 import { useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import { updateComment } from '../../redux/slices/comments';
 import style from './Comment.module.scss'
 
-const Comment = (obj, index, userId, isLoading) => {
+const Comment = (obj, index, isLoading) => {
   // debugger
   const dispatch = useDispatch()
   const userData = useSelector(state => state.auth.data)
@@ -65,11 +65,24 @@ const Comment = (obj, index, userId, isLoading) => {
       <React.Fragment key={index}>
         <ListItem alignItems="flex-start">
           <ListItemAvatar>
-            {isLoading ? (
+            {isLoading
+              ?
               <Skeleton variant="circular" width={40} height={40} />
-            ) : (
-              <Avatar alt={obj.obj ? obj.obj.user.fullName : 'fullName'} src={obj.obj ? obj.obj.user.avatarUrl : ''} />
-            )}
+              : <>
+                {obj.obj && (userData?._id === obj.obj.user._id)
+                  ?
+                  <Badge
+                    overlap="circular"
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                    variant="dot"
+                    color='success'
+                  >
+                    <Avatar alt={obj.obj ? obj.obj.user.fullName : 'fullName'} src={obj.obj ? obj.obj.user.avatarUrl : ''} />
+                  </Badge>
+                  : <Avatar alt={obj.obj ? obj.obj.user.fullName : 'fullName'} src={obj.obj ? obj.obj.user.avatarUrl : ''} />
+                }
+              </>
+            }
           </ListItemAvatar>
           {isLoading ? (
             <div style={{ display: "flex", flexDirection: "column" }}>

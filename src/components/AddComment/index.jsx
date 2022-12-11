@@ -1,17 +1,15 @@
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 
 import styles from "./AddComment.module.scss";
 
-import TextField from "@mui/material/TextField";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
 import { useSelector, useDispatch } from "react-redux";
 import { createComment } from "../../redux/slices/comments";
+import { TextField, Avatar, Button, Badge } from "@mui/material";
 
 
 
 
-export const AddComment = ({id, createCommentCB}) => {
+export const AddComment = ({ id, isAuth }) => {
 
   const [value, setValue] = useState('')
   const [isValid, setIsValid] = useState(true)
@@ -43,15 +41,22 @@ export const AddComment = ({id, createCommentCB}) => {
       setHelperText('')
     }
   }
-  
+
 
   return (
     <>
       <div className={styles.root}>
-        <Avatar
-          classes={{ root: styles.avatar }}
-          src={avatarUrlOfAuthor}
-        />
+        <div>
+          <Badge
+            overlap="circular"
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            variant="dot"
+            color='success'
+            classes={{ root: styles.avatar }}
+          >
+            <Avatar src={avatarUrlOfAuthor} />
+          </Badge>
+        </div>
         <div className={styles.form}>
           <TextField
             label="Написать комментарий"
