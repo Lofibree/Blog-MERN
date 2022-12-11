@@ -1,6 +1,8 @@
 # Blog app 
 ## Fullstack project using MERN stack.
 
+### Host: https://blog-mern-hu6s.vercel.app/
+
 ### State manager - <img src="https://img.shields.io/badge/-Redux Toolkit-764ABC?style=flat-square&logo=redux" height="25"/>
 
 
