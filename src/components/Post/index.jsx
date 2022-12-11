@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
 import {Link} from 'react-router-dom'
 import IconButton from '@mui/material/IconButton';
@@ -12,8 +12,8 @@ import styles from './Post.module.scss';
 import { UserInfo } from '../UserInfo';
 import { PostSkeleton } from './Skeleton';
 import { fetchRemovePost } from '../../redux/slices/posts';
-
-
+import { Modal } from '@mui/material';
+import {Box} from '@mui/material';
 
 
 
@@ -36,6 +36,10 @@ export const Post = ({
 
   const dispatch = useDispatch()
 
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
 
   if (isLoading) {
     return <PostSkeleton />;
@@ -46,6 +50,22 @@ export const Post = ({
       dispatch(fetchRemovePost(id))
     }
    };
+
+
+  const style = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: 'fit-content',
+    bgcolor: 'background.paper',
+    border: '2px solid #000',
+    boxShadow: 24,
+    p: 2,
+  };
+
+
+
 
   return (
     <div className={clsx(styles.root, { [styles.rootFull]: isFullPost })}>
@@ -61,10 +81,33 @@ export const Post = ({
           </IconButton>
         </div>
       )}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+        {imageUrl && (
+        <img
+          className={styles.imageModal}
+          src={imageUrl.indexOf('http') !== -1
+          ? imageUrl
+          : `http://localhost:4000${imageUrl}`
+        }
+          alt={title}
+        />
+      )}
+        </Box>
+      </Modal>
       {imageUrl && (
         <img
           className={clsx(styles.image, { [styles.imageFull]: isFullPost })}
-          src={imageUrl}
+          src={imageUrl.indexOf('http') !== -1
+          ? imageUrl
+          : `http://localhost:4000${imageUrl}`
+        }
+          onClick={handleOpen}
           alt={title}
         />
       )}
@@ -75,9 +118,9 @@ export const Post = ({
             {isFullPost ? title : <Link to={`/posts/${id}`}>{title}</Link>}
           </h2>
           <ul className={styles.tags}>
-            {tags.map((name) => (
-              <li key={name}>
-                <Link to={`/tags/${name}`}>#{name}</Link>
+            {tags.map((tag) => (
+              <li key={tag}>
+                <Link to={`/tags/${tag}`}>#{tag}</Link>
               </li>
             ))}
           </ul>

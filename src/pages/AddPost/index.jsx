@@ -23,12 +23,12 @@ export const AddPost = () => {
   const [title, setTitle] = React.useState('');
   const [tags, setTags] = React.useState('');
   const [imageUrl, setImageUrl] = React.useState('');
+  const [inputUrl, setInputUrl] = React.useState('');
   const inputFileRef = useRef(null)
 
   const isEditing = Boolean(id)
 
   const handleChangeFile = async (event) => {
-    console.log(event.target.files)
     try {
       const formData = new FormData()
       const file = event.target.files[0]
@@ -42,9 +42,7 @@ export const AddPost = () => {
     }
   };
 
-  const onClickRemoveImage = () => {
-    setImageUrl('')
-  };
+  const onClickRemoveImage = () => setImageUrl('')
 
   const onChange = React.useCallback((value) => {
     setText(value);
@@ -59,7 +57,6 @@ export const AddPost = () => {
         tags: tags.split(',').filter(t => ((t.indexOf(' ') === -1) && (t.indexOf(',') === -1))), // исключаю теги с лишней ',' и пробелом
         text
       }
-      // debugger
       const { data } = isEditing
         ? await axios.patch(`/posts/${id}`, fields)
         : await axios.post('/posts', fields)
@@ -84,8 +81,7 @@ export const AddPost = () => {
       })
     }
   }, [])
-  const options = React.useMemo(
-    () => ({
+  const options = React.useMemo(() => ({
       spellChecker: false,
       maxHeight: '400px',
       autofocus: true,
@@ -95,20 +91,28 @@ export const AddPost = () => {
         enabled: true,
         delay: 1000,
       },
-    }),
-    [],
-  );
+    }), [])
 
   if (!isAuth) {
     return <Navigate to='/posts/new' />
   }
-  // console.log(title, tags, value)
 
 
   return (
     <Paper style={{ padding: 30 }}>
-      <Button variant="outlined" size="large" onClick={() => inputFileRef.current.click()}>
+      <Button variant="outlined" sx={{ mr: 5}} size="large" onClick={() => inputFileRef.current.click()}>
         Загрузить превью
+      </Button>
+      <span>или</span>
+      <TextField
+        label="Ссылка на изображение"
+        sx={{ml: 5, mr: 5, width: 200}}
+        variant="standard"
+        value={inputUrl}
+        onChange={(e) => setInputUrl(e.target.value)}
+      />
+      <Button variant="outlined" size="small" sx={{width: 70, fontSize: 10}} onClick={() => setImageUrl(inputUrl)}>
+        Загрузить по ссылке
       </Button>
       <input type="file" onChange={handleChangeFile} ref={inputFileRef} hidden />
       {imageUrl && (
@@ -116,7 +120,12 @@ export const AddPost = () => {
           <Button variant="contained" color="error" onClick={onClickRemoveImage}>
             Удалить
           </Button>
-          <img className={styles.image} src={`http://localhost:4000${imageUrl}`} alt="Uploaded" />
+          <img className={styles.image} src={imageUrl.indexOf('http') !== -1
+            ? imageUrl
+            : `http://localhost:4000${imageUrl}`
+          }
+            alt="Uploaded"
+          />
         </>
       )}
       <br />

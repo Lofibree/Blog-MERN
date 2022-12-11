@@ -41,7 +41,7 @@ export const PostsByTag = () => {
                   <Post
                     id={obj._id}
                     title={obj.title}
-                    imageUrl={obj.imageUrl ? `http://localhost:4000${obj.imageUrl}` : ''}
+                    imageUrl={obj.imageUrl ? obj.imageUrl : ''}
                     user={obj.user}
                     createdAt={obj.createdAt.split('T')}
                     updatedAt={obj.updatedAt.split('T')}
@@ -52,28 +52,6 @@ export const PostsByTag = () => {
                   />
                 ))}
         </Grid>
-        {/* <Grid xs={4} item> */}
-          {/* <TagsBlock items={tags.items} isLoading={isTagsLoading} /> */}
-          {/* <CommentsBlock
-            items={[
-              {
-                user: {
-                  fullName: 'Вася Пупкин',
-                  avatarUrl: 'https://mui.com/static/images/avatar/1.jpg',
-                },
-                text: 'Это тестовый комментарий',
-              },
-              {
-                user: {
-                  fullName: 'Иван Иванов',
-                  avatarUrl: 'https://mui.com/static/images/avatar/2.jpg',
-                },
-                text: 'When displaying three lines or more, the avatar is not aligned at the top. You should set the prop to align the avatar at the top',
-              },
-            ]}
-            isLoading={false}
-          /> */}
-        {/* </Grid> */}
       </Grid>
     </>
   );

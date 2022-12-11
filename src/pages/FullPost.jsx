@@ -7,9 +7,8 @@ import { useParams } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from '../axios.js'
-import ReactMarkdown from "react-markdown";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchComments, createComment } from "../redux/slices/comments";
+import { fetchComments } from "../redux/slices/comments";
 import { selectIsAuth } from "../redux/slices/auth";
 
 
@@ -22,7 +21,6 @@ export const FullPost = () => {
 
   const comments = useSelector(state => state.comments.comments.items)
   const [data, setData] = useState()
-  // const [isEditable, setData] = useState()
   const [isLoading, setIsLoading] = useState(true)
   const dispatch = useDispatch()
 
@@ -49,7 +47,7 @@ export const FullPost = () => {
       <Post
         id={data._id}
         title={data.title}
-        imageUrl={data.imageUrl ? `http://localhost:4000${data.imageUrl}` : ''}
+        imageUrl={data.imageUrl.indexOf('http') !== -1 ? data.imageUrl : `http://localhost:4000${data.imageUrl}`}
         user={data.user}
         createdAt={data.createdAt.split('T')}
         updatedAt={data.updatedAt.split('T')}
@@ -58,10 +56,7 @@ export const FullPost = () => {
         tags={data.tags}
         isFullPost
       >
-        <p>
-          {/* <ReactMarkdown children={data.text} /> */}
-          {data.text}
-        </p>
+        <p>{data.text}</p>
       </Post>
       <CommentsBlock items={comments} isLoading={isLoading} userId={userData?._id }>
         {isAuth && <AddComment id={id} />}

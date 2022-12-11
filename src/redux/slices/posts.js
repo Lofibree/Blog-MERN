@@ -30,6 +30,12 @@ export const fetchPostsByTags = createAsyncThunk('posts/fetchPostsByTags', async
     // debugger
     return data
 })
+export const fetchSearchedPosts = createAsyncThunk('posts/fetchSearchedPosts', async (fields) => {
+    const {data} = await axios.get(`search/${fields.title}`)
+    console.log(data)
+    // debugger
+    return data
+})
 export const fetchRemovePost = createAsyncThunk('posts/fetchRemovePost', async (id) => 
     await axios.delete(`/posts/${id}`)
 )
@@ -120,6 +126,20 @@ const postSlice = createSlice({
             state.posts.status = 'loaded'
         },
         [fetchPostsByTags.rejected]: (state, action) => {
+            state.posts.items = []
+            state.posts.status = 'error'
+        },
+
+        // getting searched posts
+        [fetchSearchedPosts.pending]: (state, action) => {
+            state.posts.items = []
+            state.posts.status = 'loading'
+        },
+        [fetchSearchedPosts.fulfilled]: (state, action) => {
+            state.posts.items = action.payload
+            state.posts.status = 'loaded'
+        },
+        [fetchSearchedPosts.rejected]: (state, action) => {
             state.posts.items = []
             state.posts.status = 'error'
         },
