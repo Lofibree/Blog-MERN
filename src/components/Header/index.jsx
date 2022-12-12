@@ -3,7 +3,7 @@ import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom'
 import styles from './Header.module.scss';
 import Container from '@mui/material/Container';
-import { logout, selectIsAuth } from '../../redux/slices/auth';
+import { selectIsAuth } from '../../redux/slices/auth';
 import { useDispatch, useSelector } from 'react-redux';
 import { ExitToApp, Notes } from '@mui/icons-material';
 import Menu from '@mui/material/Menu';
@@ -12,7 +12,7 @@ import { useState } from 'react';
 import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { Avatar } from '@mui/material';
 import {Badge} from '@mui/material';
-
+import { fetchLogout } from '../../redux/slices/auth';
 
 export const Header = () => {
 
@@ -28,7 +28,7 @@ export const Header = () => {
 
   const onClickLogout = () => {
     if (window.confirm('Вы точно хотите выйти?')) {
-      dispatch(logout(userData.email))
+      dispatch(fetchLogout(userData.email))
       window.localStorage.removeItem('token')
     }
   }; 

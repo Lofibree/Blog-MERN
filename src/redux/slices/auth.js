@@ -52,6 +52,10 @@ const authSlise = createSlice({
         },
 
         // logout
+        [fetchLogout.pending]: (state, action) => {
+            state.status = 'loading'
+            state.data = null
+        },
         [fetchLogout.fulfilled]: (state, action) => {
             state.status = 'loaded'
             state.data = null
