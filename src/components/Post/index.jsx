@@ -93,7 +93,7 @@ export const Post = ({
           className={styles.imageModal}
           src={imageUrl.indexOf('http') !== -1
           ? imageUrl
-          : `http://localhost:4000${imageUrl}`
+          : `${process.env.REACT_APP_API_URL}${imageUrl}`
         }
           alt={title}
         />
@@ -105,7 +105,7 @@ export const Post = ({
           className={clsx(styles.image, { [styles.imageFull]: isFullPost })}
           src={imageUrl.indexOf('http') !== -1
           ? imageUrl
-          : `http://localhost:4000${imageUrl}`
+          : `${process.env.REACT_APP_API_URL}${imageUrl}`
         }
           onClick={handleOpen}
           alt={title}
