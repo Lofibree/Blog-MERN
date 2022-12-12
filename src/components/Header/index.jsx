@@ -28,10 +28,10 @@ export const Header = () => {
 
   const onClickLogout = () => {
     if (window.confirm('Вы точно хотите выйти?')) {
-      dispatch(logout())
+      dispatch(logout(userData.email))
       window.localStorage.removeItem('token')
     }
-  };
+  }; 
 
 
   return (

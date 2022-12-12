@@ -20,6 +20,10 @@ export const fetchUpdateMe = createAsyncThunk('auth/fetchUpdateMe', async (field
     const {data} = await axios.patch('/personal/edit', fields)
     return data
 })
+export const fetchLogout = createAsyncThunk('auth/fetchLogout', async (params) => {
+    const {data} = await axios.patch('/auth/logout', params)
+    return data
+})
 
 
 const initialState = {
@@ -30,12 +34,8 @@ const initialState = {
 const authSlise = createSlice({
     name: 'auth',
     initialState,
-    reducers: {
-        logout: (state) => { // мб стоит logout сделать на серваке
-            state.data = null
-        }
-    },
-    extraReducers: {
+    reducers: {},
+    extraReducers: { 
 
         // авторизация
         [fetchAuth.pending]: (state, action) => {
@@ -48,6 +48,12 @@ const authSlise = createSlice({
         },
         [fetchAuth.rejected]: (state, action) => {
             state.status = 'error'
+            state.data = null
+        },
+
+        // logout
+        [fetchLogout.fulfilled]: (state, action) => {
+            state.status = 'loaded'
             state.data = null
         },
 

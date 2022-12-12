@@ -2,11 +2,11 @@ import { Avatar, Badge } from '@mui/material';
 import React from 'react';
 import styles from './UserInfo.module.scss';
 
-export const UserInfo = ({ avatarUrl, fullName, createdAt, isEditable }) => {
+export const UserInfo = ({ avatarUrl, fullName, createdAt, isEditable, isOnline }) => {
   // debugger
   return (
     <div className={styles.root}>
-      {isEditable
+      {isOnline
         ?
         <Badge
           overlap="circular"
