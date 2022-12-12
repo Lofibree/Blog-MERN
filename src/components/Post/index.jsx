@@ -31,6 +31,7 @@ export const Post = ({
   isFullPost,
   isLoading,
   isEditable,
+  isOnline
 }) => {
 
 
@@ -112,7 +113,7 @@ export const Post = ({
         />
       )}
       <div className={styles.wrapper}>
-        <UserInfo {...user} isEditable={isEditable} createdAt={createdAt} updatedAt={updatedAt} />
+        <UserInfo {...user} isOnline={isOnline} isEditable={isEditable} createdAt={createdAt} updatedAt={updatedAt} />
         <div className={styles.indention}>
           <h2 className={clsx(styles.title, { [styles.titleFull]: isFullPost })}>
             {isFullPost ? title : <Link to={`/posts/${id}`}>{title}</Link>}

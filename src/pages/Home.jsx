@@ -111,6 +111,7 @@ export const Home = () => {
                     commentsCount={obj.commentsCount}
                     tags={obj.tags}
                     isEditable={userData?._id === obj.user._id}
+                    isOnline={userData?.isOnline}
                   />
                 )}
         </Grid>
