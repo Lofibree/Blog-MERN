@@ -33,7 +33,7 @@ export const Post = ({
   isEditable,
   isOnline
 }) => {
-
+// debugger
 
   const dispatch = useDispatch()
 
@@ -72,7 +72,7 @@ export const Post = ({
     <div className={clsx(styles.root, { [styles.rootFull]: isFullPost })}>
       {isEditable && (
         <div className={styles.editButtons}>
-          <Link to={`/posts/${id}/edit`}>
+          <Link to={`/posts/edit/${id}`}>
             <IconButton color="primary">
               <EditIcon />
             </IconButton>
@@ -92,10 +92,7 @@ export const Post = ({
         {imageUrl && (
         <img
           className={styles.imageModal}
-          src={imageUrl.indexOf('http') !== -1
-          ? imageUrl
-          : `${process.env.REACT_APP_API_URL}${imageUrl}`
-        }
+          src={imageUrl}
           alt={title}
         />
       )}
@@ -104,13 +101,10 @@ export const Post = ({
       {imageUrl && (
         <img
           className={clsx(styles.image, { [styles.imageFull]: isFullPost })}
-          src={imageUrl.indexOf('http') !== -1
-          ? imageUrl
-          : `${process.env.REACT_APP_API_URL}${imageUrl}`
-        }
+          src={imageUrl}
           onClick={handleOpen}
           alt={title}
-        />
+        /> 
       )}
       <div className={styles.wrapper}>
         <UserInfo {...user} isOnline={isOnline} isEditable={isEditable} createdAt={createdAt} updatedAt={updatedAt} />

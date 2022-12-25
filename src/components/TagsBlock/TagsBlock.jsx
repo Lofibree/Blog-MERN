@@ -14,23 +14,37 @@ export const TagsBlock = ({ items, isLoading = true, title = true }) => {
   return (
     <SideBlock title={title ? 'Теги популярных статей' : 'Последние теги'} >
       <List className={style.sideBlock} >
-        {(isLoading ? [...Array(5)] : items).map((name, i) => (
-          <a
-            style={{ textDecoration: "none", color: "black" }}
-            href={`/tags/${name}`}
-          >
-            <ListItem key={i} disablePadding >
-              <ListItemButton>
-                <ListItemIcon>
-                  <TagIcon />
-                </ListItemIcon>
-                {isLoading
-                  ? <Skeleton width={100} />
-                  : <ListItemText primary={name} />
-                }
-              </ListItemButton>
-            </ListItem>
-          </a>
+        {(isLoading ? [...Array(5)] : items).map((tag, i) => (
+          <>
+            <a
+              style={{ textDecoration: "none", color: "black", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+              href={`/tags/${tag}`}
+            >
+              <ListItem key={i} disablePadding sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                <ListItemButton>
+                  <ListItemIcon sx={{ minWidth: '35px' }}>
+                    <TagIcon />
+                  </ListItemIcon>
+                  {isLoading
+                    ? <Skeleton width={100} />
+                    : <ListItemText
+                      primary={tag}
+                      primaryTypographyProps={{
+                        style: {
+                          wordBreak: 'break-word',
+                          width: '',
+                          maxWidth: '100px',
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap'
+                        }
+                      }}
+                    />
+                  }
+                </ListItemButton>
+              </ListItem>
+            </a>
+          </>
         ))}
       </List>
     </SideBlock>

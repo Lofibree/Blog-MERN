@@ -20,11 +20,14 @@ export const fetchUpdateMe = createAsyncThunk('auth/fetchUpdateMe', async (field
     const {data} = await axios.patch('/personal/edit', fields)
     return data
 })
-export const fetchLogout = createAsyncThunk('auth/fetchLogout', async (params) => {
-    const {data} = await axios.patch('/auth/logout', params)
-    return data
+export const fetchLogout = createAsyncThunk('auth/fetchLogout', async (fields) => {
+    debugger
+    await axios.patch('/auth/logout', fields)
+    debugger
+    // console.log(data)
+    // return data
 })
-
+ 
 
 const initialState = {
     data: null,

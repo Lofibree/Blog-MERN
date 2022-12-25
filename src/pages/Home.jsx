@@ -18,55 +18,80 @@ import { Box } from '@mui/system';
 
 export const Home = () => {
 
-
-  const dispatch = useDispatch()
+// debugger
   const location = useLocation()
+  const dispatch = useDispatch()
   const userData = useSelector(state => state.auth.data)
   const { posts, tags } = useSelector(state => state.posts)
-  
   const lastComments = useSelector(state => state.comments.comments)
+  
+  const isPostsLoading = posts.status === 'loading'
+  const isTagsLoading = tags.status === 'loading'
+  const isCommLoading = lastComments.status === 'loading'
+
   const [activeTab, setActiveTab] = useState(0)
   const [tagsTitle, setTagsTitle] = useState(true)
   const [value, setValue] = useState('')
 
-  const isPostsLoading = posts.status === 'loading'
-  const isTagsLoading = posts.status === 'loading'
-  const isCommLoading = lastComments.status === 'loading'
-
+  
 
   React.useEffect(() => {
-    if (location.pathname === '/posts/popular') {
-      setActiveTab(1)
-      setTagsTitle(true)
-      dispatch(fetchPopularPosts())
-      dispatch(fetchPopularTags())
-      dispatch(fetchLastComments())
-    }
-    if (location.pathname === '/posts/new') {
-      setActiveTab(0)
-      setTagsTitle(false)
-      dispatch(fetchPosts())
-      dispatch(fetchLastTags())
-      dispatch(fetchLastComments())
+    try {
+      if (location.pathname === '/posts/popular') {
+        // debugger
+        setActiveTab(1)
+        setTagsTitle(true)
+        dispatch(fetchPopularPosts())
+        dispatch(fetchPopularTags())
+        dispatch(fetchLastComments())
+      }
+      if (location.pathname === '/posts/new') {
+        // debugger
+        setActiveTab(0)
+        setTagsTitle(false)
+         dispatch(fetchPosts()).then(() => {
+          dispatch(fetchLastTags()).then(() => {
+            dispatch(fetchLastComments()) 
+          })
+         })
+      }
+    } catch (err) {
+      console.warn(err)
+      alert('Не удалось получить новости/теги/комментарии')
     }
   }, [location.pathname])
 
   const getOptions = () => {
-    const options = posts.items.map((p) => {
-      return {label: p.title, author: p.user.fullName}
-    })
-    console.log(options)
-    return options
+    try {
+      // debugger
+      if (!isPostsLoading && posts.items.length !== 0) {
+        // debugger
+        const options = posts.items.map((p) => {
+          // debugger
+          return { label: p.title, author: p.user.fullName }
+        })
+        // console.log(options)
+        return options.sort((a, b) => b.author.localeCompare(a.author))
+      } else {
+        // debugger
+        return [{ label: 'dfd', author: 'sdfsdf' }]
+      }
+    } catch (err) {
+      console.log(err)
+      alert('Не удалось сделать опции')
+    }
   }
 
   const handleOnChange = (e, newValue) => {
     setValue(newValue)
-    console.log(newValue)
     if (newValue) {
       const fields = {
         title: newValue.label
       }
       dispatch(fetchSearchedPosts(fields))
+    }
+    if (newValue === null) {
+      dispatch(fetchPosts())
     }
   }
 
@@ -77,23 +102,27 @@ export const Home = () => {
           <Link to='/posts/new' style={{ outline: 'none', textDecoration: 'none', color: 'black' }}><Tab label="Новые" /></Link>
           <Link to='/posts/popular' style={{ outline: 'none', textDecoration: 'none', color: 'black' }}><Tab label="Популярные" /></Link>
         </Tabs>
-        <Autocomplete
-          disablePortal
-          id="combo-box-demo"
-          options={getOptions().sort((a, b) => b.author.localeCompare(a.author))}
-          value={value}
-          onChange={handleOnChange}
-          sx={{ width: 300 }}
-          groupBy={(option) => option.author}
-          renderInput={(params) =>
-            <TextField
-              {...params}
-              label="Поиск по заголовкам статей"
-            />
-          }
-        />
+        {isPostsLoading
+        ? '' 
+        : <Autocomplete
+        disablePortal
+        id="combo-box-demo"
+        options={getOptions()}
+        value={value}
+        onChange={handleOnChange}
+        sx={{ width: {sm: 300, xs: 200} }}
+        groupBy={(option) => option.author}
+        renderInput={(params) =>
+          <TextField
+            {...params}
+            label="Поиск по заголовкам статей"
+            size='small'
+          />
+        }
+      /> 
+        }
       </Box>
-      <Grid container spacing={4}>
+      <Grid container spacing={{sm: 4, xs: 2}}>
         <Grid xs={8} item>
           {
             (isPostsLoading ? [...Array(5)] : posts.items)
@@ -103,7 +132,7 @@ export const Home = () => {
                   <Post
                     id={obj._id}
                     title={obj.title}
-                    imageUrl={obj.imageUrl ? obj.imageUrl : ''}
+                    imageUrl={obj.image ? obj.image.data : ''}
                     user={obj.user}
                     createdAt={obj.createdAt.split('T')}
                     updatedAt={obj.updatedAt.split('T')}
@@ -111,14 +140,20 @@ export const Home = () => {
                     commentsCount={obj.commentsCount}
                     tags={obj.tags}
                     isEditable={userData?._id === obj.user._id}
-                    isOnline={userData?.isOnline}
+                    isOnline={userData?.isOnline && userData._id === obj.user._id}
                   />
                 )}
         </Grid>
         <Grid xs={4} item>
           <>
+          {/* {
+            isTagsLoading 
+                ? ''
+                :  */}
+                {/* <TagsBlock items={tags.items} isLoading={isTagsLoading} title={tagsTitle} /> */}
+                {/* } */}
             <TagsBlock items={tags.items} isLoading={isTagsLoading} title={tagsTitle} />
-            <CommentsBlock items={lastComments.items} isLoading={isCommLoading}  />
+            <CommentsBlock items={lastComments.items} isLoading={isCommLoading} />
           </>
         </Grid>
       </Grid>

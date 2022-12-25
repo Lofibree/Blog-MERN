@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectIsAuth } from "../../redux/slices/auth";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from '../../axios.js'
-import { Modal } from '@mui/material';
+import { CircularProgress, LinearProgress, Modal } from '@mui/material';
 import { Box } from '@mui/system';
 import { fetchCreatePost, fetchOnePost, fetchUpdatePost } from '../../redux/slices/posts';
 
@@ -19,7 +19,8 @@ export const AddPost = () => {
 
   const dispatch = useDispatch()
   const isAuth = useSelector(selectIsAuth)
-  const post = useSelector(state => state.posts.posts.items)
+  // const post = useSelector(state => state.posts.posts.items)
+  const isPostCreated = useSelector(state => state.posts.posts.status)
   const navigate = useNavigate()
   const { id } = useParams()
   const [text, setText] = React.useState('');
@@ -27,6 +28,8 @@ export const AddPost = () => {
   const [tags, setTags] = React.useState('');
   const [imageUrl, setImageUrl] = React.useState('');
   const [inputUrl, setInputUrl] = React.useState('');
+  const [isLoadingImg, setIsLoadingImg] = React.useState(false);
+  const [loadingPercent, setLoadingPercent] = React.useState(0);
   const [open, setOpen] = React.useState(false);
   const inputFileRef = useRef(null)
   const isEditing = Boolean(id)
@@ -35,52 +38,68 @@ export const AddPost = () => {
     try {
       const formData = new FormData()
       const file = event.target.files[0]
-      formData.append('image', file)
-      const { data } = await axios.post('upload', formData)
-      console.log(data)
-      setImageUrl(data.url)
-      handleClose()
+      if (file.size < 1024 * 1024) {
+        formData.append('image', file)
+        formData.append('postId', id)
+        setIsLoadingImg(true)
+        const { data } = await axios.post('upload', formData)
+        setIsLoadingImg(false)
+        setImageUrl({ data: data._doc.data, _id: data._doc._id })
+        handleClose()
+      } else {
+        alert('Слишком большой файл')
+      }
     } catch (err) {
       console.warn(err)
       alert('Ошибка при загрузке файла')
     }
   };
 
-  const onClickRemoveImage = () => setImageUrl('')
+  const onClickRemoveImage = async () => {
+    try {
+      const { data } = await axios.delete('upload', { data: { imgId: imageUrl._id } })
+      setImageUrl('')
+    } catch (err) {
+      console.warn(err)
+      alert('Ошибка при удалении файла')
+    }
+  }
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const onChange = React.useCallback((value) => {setText(value)}, []);
+  const onChange = React.useCallback((value) => { setText(value) }, []);
 
-  const onSubmit = async () => { // мб сделать через redux
+  const onSubmit = async () => { // мб сделать через redux // не 
     try {
       const fields = {
         title,
-        imageUrl,
         tags: tags.split(',').filter(t => ((t.indexOf(' ') === -1) && (t.indexOf(',') === -1))), // исключаю теги с лишней ',' и пробелом
-        text
+        text,
+        image: imageUrl._id
       }
       if (isEditing) {
-        dispatch(fetchUpdatePost(id, fields))
-      } else if(!isEditing) {
-        dispatch(fetchCreatePost(fields))
+        await axios.patch(`/posts/edit/${id}`, fields)
+        navigate(`/posts/${id}`)
+      } else if (!isEditing) {
+        dispatch(fetchCreatePost(fields)).unwrap().then((data) => {
+          const _id = isPostCreated === 'loaded' ? data._id : 'postId'
+          navigate(`/posts/${_id}`)
+        })
       }
-      const _id = isEditing ? id : post._id
-      navigate(`/posts/${_id}`)
     } catch (err) {
       console.warn(err)
       alert('Ошибка при создании статьи')
     }
   }
 
-  useEffect(() => {
+  useEffect(async () => {
     if (id) {
       try {
-        dispatch(fetchOnePost(id))
-        setTitle(post ? post.title : '')
-        setText(post ? post.text : '')
-        setImageUrl(post ? post.imageUrl : '')
-        setTags(post ? post.tags.join(',') : '')  
+        const data = await dispatch(fetchOnePost(id)).unwrap()
+        setTitle(data.title)
+        setText(data.text)
+        setImageUrl(data.image)
+        setTags(data.tags.join(','))
       } catch (err) {
         console.warn(err)
         alert('Ошибка при получении статьи')
@@ -89,16 +108,16 @@ export const AddPost = () => {
   }, [])
 
   const options = React.useMemo(() => ({
-      spellChecker: false,
-      maxHeight: '400px',
-      autofocus: true,
-      placeholder: 'Введите текст...',
-      status: false,
-      autosave: {
-        enabled: true,
-        delay: 1000,
-      },
-    }), [])
+    spellChecker: false,
+    maxHeight: '400px',
+    autofocus: true,
+    placeholder: 'Введите текст...',
+    status: false,
+    autosave: {
+      enabled: true,
+      delay: 1000,
+    },
+  }), [])
 
   if (!isAuth) {
     return <Navigate to='/posts/new' />
@@ -126,46 +145,42 @@ export const AddPost = () => {
 
   return (
     <Paper style={{ padding: 30 }}>
-      <Button variant="outlined" sx={{ mr: 5 }} size="large" onClick={handleOpen}>
-        Загрузить превью
-      </Button>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Button variant="outlined" sx={{mb: 3}} size="large" onClick={() => inputFileRef.current.click()}>
-            Выбрать с ПК
-          </Button>
-          <span>или</span>
-          <TextField
-            label="Ссылка на изображение"
-            sx={{ width: 400 }}
-            variant="standard"
-            value={inputUrl}
-            onChange={(e) => setInputUrl(e.target.value)}
-          />
-          <Button variant="outlined" size="small" sx={{mt: 2}} onClick={() => setImageUrl(inputUrl)}>
-            Загрузить по ссылке
-          </Button>
-        </Box>
-      </Modal>
-      <input type="file" onChange={handleChangeFile} ref={inputFileRef} hidden />
-      {imageUrl && (
+      {imageUrl ? (
         <>
           <Button variant="contained" color="error" onClick={onClickRemoveImage}>
             Удалить
           </Button>
-          <img className={styles.image} src={imageUrl.indexOf('http') !== -1
-            ? imageUrl
-            : `http://localhost:4000${imageUrl}`
-          }
+          <img className={styles.image}
+            src={imageUrl.data || imageUrl}
             alt="Uploaded"
           />
         </>
-      )}
+      )
+        : (
+          <>
+            <Button variant="outlined" sx={{ mr: 5 }} size="large" onClick={handleOpen}>
+              Загрузить превью
+            </Button>
+            <Modal
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
+              <Box sx={style}>
+                <Button variant="outlined" sx={{ mb: 3 }} size="large" onClick={() => inputFileRef.current.click()}>
+                  Выбрать с ПК
+                </Button>
+                {isLoadingImg
+                  ? <CircularProgress />
+                  : ''
+                }
+              </Box>
+            </Modal>
+            <input type="file" onChange={handleChangeFile} ref={inputFileRef} hidden />
+          </>
+        )
+      }
       <br />
       <br />
       <TextField

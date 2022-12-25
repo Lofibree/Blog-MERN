@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from '@mui/material/Button';
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import styles from './Header.module.scss';
 import Container from '@mui/material/Container';
 import { selectIsAuth } from '../../redux/slices/auth';
@@ -13,6 +13,9 @@ import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import { Avatar } from '@mui/material';
 import {Badge} from '@mui/material';
 import { fetchLogout } from '../../redux/slices/auth';
+
+
+
 
 export const Header = () => {
 
@@ -28,7 +31,10 @@ export const Header = () => {
 
   const onClickLogout = () => {
     if (window.confirm('Вы точно хотите выйти?')) {
-      dispatch(fetchLogout(userData.email))
+      const fields = {
+        email: userData.email
+      }
+      dispatch(fetchLogout(fields))
       window.localStorage.removeItem('token')
     }
   }; 
@@ -38,9 +44,9 @@ export const Header = () => {
     <div className={styles.root}>
       <Container maxWidth="lg">
         <div className={styles.inner}>
-          <Link className={styles.logo} to="/posts/new">
+          <NavLink className={styles.logo} to="/posts/new">
             <div>BRYTKOV BLOG</div>
-          </Link>
+          </NavLink>
           <div className={styles.buttons}>
             {isAuth
               ? (<>
@@ -62,14 +68,14 @@ export const Header = () => {
                   >
                     <MenuItem onClick={handleClose}>
                       <Link to="/add-post">
-                        <Button variant="contained" size='small' startIcon={<Notes />}>
+                        <Button variant="text" size='small' startIcon={<Notes />}>
                           Написать статью
                         </Button>
                       </Link>
                     </MenuItem >
                     <MenuItem onClick={handleClose}>
                       <Link to="/personal/me">
-                        <Button variant="contained" size='small' startIcon={<AccountBoxIcon />}>
+                        <Button variant="text" size='small' startIcon={<AccountBoxIcon />}>
                           Личный кабинет
                         </Button>
                       </Link>
@@ -87,7 +93,7 @@ export const Header = () => {
                       Личный кабинет
                     </Button>
                   </Link>
-                </span>
+                  </span>
                 <Button onClick={onClickLogout} size='small' variant="contained" color="error" endIcon={<ExitToApp />}>
                   Выйти
                 </Button>

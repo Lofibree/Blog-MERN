@@ -8,7 +8,7 @@ export const UserInfo = ({ avatarUrl, fullName, createdAt, isEditable, isOnline 
     <div className={styles.root}>
       {isOnline
         ?
-        <Badge
+        <Badge 
           overlap="circular"
           anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
           variant="dot"
@@ -26,5 +26,5 @@ export const UserInfo = ({ avatarUrl, fullName, createdAt, isEditable, isOnline 
         <span className={styles.additional}>Time: {createdAt[1].split('.')[0]}</span>
       </div>
     </div>
-  );
+  ); 
 };

@@ -16,7 +16,17 @@ import EditIcon from '@mui/icons-material/Edit';
 import { updateComment } from '../../redux/slices/comments';
 import style from './Comment.module.scss'
 
-const Comment = (obj, index, isLoading) => {
+const Comment = ({
+  fullName,
+  avatarUrl,
+  text,
+  postId,
+  id,
+  userId,
+  index,
+  isLoading,
+  isFullPost
+}) => {
   // debugger
   const dispatch = useDispatch()
   const userData = useSelector(state => state.auth.data)
@@ -25,6 +35,7 @@ const Comment = (obj, index, isLoading) => {
   const [helperText, setHelperText] = useState('')
   const [isValid, setIsValid] = useState(true)
 
+  const isOnline = Boolean(userData?.isOnline && userData._id === userId)
 
   const handleDelete = (postId, commentId) => {
     const fields = {
@@ -69,7 +80,7 @@ const Comment = (obj, index, isLoading) => {
               ?
               <Skeleton variant="circular" width={40} height={40} />
               : <>
-                {obj.obj && (userData?._id === obj.obj.user._id)
+                {isOnline
                   ?
                   <Badge
                     overlap="circular"
@@ -77,36 +88,64 @@ const Comment = (obj, index, isLoading) => {
                     variant="dot"
                     color='success'
                   >
-                    <Avatar alt={obj.obj ? obj.obj.user.fullName : 'fullName'} src={obj.obj ? obj.obj.user.avatarUrl : ''} />
+                    <Avatar alt={fullName} src={avatarUrl} />
                   </Badge>
-                  : <Avatar alt={obj.obj ? obj.obj.user.fullName : 'fullName'} src={obj.obj ? obj.obj.user.avatarUrl : ''} />
+                  : <Avatar alt={fullName} src={avatarUrl} />
                 }
               </>
             }
           </ListItemAvatar>
           {isLoading ? (
             <div style={{ display: "flex", flexDirection: "column" }}>
-              <Skeleton variant="text" height={25} width={120} />
-              <Skeleton variant="text" height={18} width={230} />
+              {isFullPost
+                ? <>
+                  <Skeleton variant="text" height={25} width={120} />
+                  <Skeleton variant="text" height={18} width={230} />
+                </>
+                : <>
+                  <Skeleton variant="text" height={25} width={60} />
+                  <Skeleton variant="text" height={18} width={115} />
+                </>
+              }
             </div>
           ) : (
-            <ListItemText
-              primary={obj.obj ? obj.obj.user.fullName : 'fullName'}
-              secondary={obj.obj ? obj.obj.text : 'text'}
-              primaryTypographyProps={{ style: { wordBreak: 'break-word', width: '' } }}
-            />
+            <>
+              {isFullPost
+                ? <ListItemText
+                  primary={fullName}
+                  secondary={text}
+                  // sx={{ width: '80px' }}
+                  primaryTypographyProps={{ style: { wordBreak: 'break-word', width: '' } }}
+                />
+                : <ListItemText
+                  primary={fullName}
+                  secondary={text}
+                  primaryTypographyProps={{ style: { wordBreak: 'break-word', width: '' } }}
+                  secondaryTypographyProps={{
+                    style: {
+                      wordBreak: 'break-word',
+                      width: '',
+                      maxWidth: '100px',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap'
+                    }
+                  }}
+                />
+              }
+            </>
           )}
-          {obj.obj && (userData?._id === obj.obj.user._id)
+          {userId && (userData?._id === userId)
             ? (
               <>
                 <IconButton
-                  onClick={() => handleUpdate(obj.obj.text)}
+                  onClick={() => handleUpdate(text)}
                   color="primary"
                 >
                   <EditIcon />
                 </IconButton>
                 <IconButton
-                  onClick={() => handleDelete(obj.obj.post._id, obj.obj._id)}
+                  onClick={() => handleDelete(postId, id)}
                   color="error"
                 >
                   <DeleteIcon />
@@ -131,7 +170,7 @@ const Comment = (obj, index, isLoading) => {
                 onChange={handleOnChange}
                 fullWidth
               />
-              <Button variant="contained" onClick={() => onSubmit(obj.obj.post._id, obj.obj._id)}>Обновить</Button>
+              <Button variant="contained" onClick={() => onSubmit(postId, id)}>Обновить</Button>
             </>
             : ''
           }
