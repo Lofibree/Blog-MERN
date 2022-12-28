@@ -92,7 +92,9 @@ export const Post = ({
         {image && (
         <img
           className={styles.imageModal}
-          src={`http://localhost:4000/upload/${image}` || `${process.env.REACT_APP_API_URL}/${image}`}
+          src={
+            // `http://localhost:4000/upload/${image}` || 
+          `${process.env.REACT_APP_API_URL}/upload/${image}`}
           alt={title}
         />
       )}
@@ -101,7 +103,9 @@ export const Post = ({
       {image !== '' && (
         <img
           className={clsx(styles.image, { [styles.imageFull]: isFullPost })}
-          src={`http://localhost:4000/upload/${image}` ||`${process.env.REACT_APP_API_URL}/${image}`}
+          src={
+            // `http://localhost:4000/upload/${image}` ||
+          `${process.env.REACT_APP_API_URL}/upload/${image}`}
           onClick={handleOpen}
           alt={title}
         /> 
