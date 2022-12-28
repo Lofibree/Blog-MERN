@@ -9,6 +9,7 @@ import ListItemText from "@mui/material/ListItemText";
 import Skeleton from "@mui/material/Skeleton";
 import style from './TagsBlock.module.scss'
 import { SideBlock } from "../SideBlock";
+import { Link } from "react-router-dom";
 
 export const TagsBlock = ({ items, isLoading = true, title = true }) => {
   return (
@@ -16,9 +17,9 @@ export const TagsBlock = ({ items, isLoading = true, title = true }) => {
       <List className={style.sideBlock} >
         {(isLoading ? [...Array(5)] : items).map((tag, i) => (
           <>
-            <a
+            <Link
               style={{ textDecoration: "none", color: "black", overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
-              href={`/tags/${tag}`}
+              to={`/tags/${tag}`}
             >
               <ListItem key={i} disablePadding sx={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 <ListItemButton>
@@ -43,7 +44,7 @@ export const TagsBlock = ({ items, isLoading = true, title = true }) => {
                   }
                 </ListItemButton>
               </ListItem>
-            </a>
+            </Link>
           </>
         ))}
       </List>

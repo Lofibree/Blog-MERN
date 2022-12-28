@@ -26,7 +26,7 @@ export const AddPost = () => {
   const [text, setText] = React.useState('');
   const [title, setTitle] = React.useState('');
   const [tags, setTags] = React.useState('');
-  const [imageUrl, setImageUrl] = React.useState('');
+  const [imageId, setImageId] = React.useState('');
   const [inputUrl, setInputUrl] = React.useState('');
   const [isLoadingImg, setIsLoadingImg] = React.useState(false);
   const [loadingPercent, setLoadingPercent] = React.useState(0);
@@ -42,9 +42,9 @@ export const AddPost = () => {
         formData.append('image', file)
         formData.append('postId', id)
         setIsLoadingImg(true)
-        const { data } = await axios.post('upload', formData)
+        const { data } = await axios.post('/upload', formData)
         setIsLoadingImg(false)
-        setImageUrl({ data: data._doc.data, _id: data._doc._id })
+        setImageId(data)
         handleClose()
       } else {
         alert('Слишком большой файл')
@@ -57,8 +57,9 @@ export const AddPost = () => {
 
   const onClickRemoveImage = async () => {
     try {
-      const { data } = await axios.delete('upload', { data: { imgId: imageUrl._id } })
-      setImageUrl('')
+      // debugger
+      const { data } = await axios.delete(`/upload/${imageId}`)
+      setImageId('')
     } catch (err) {
       console.warn(err)
       alert('Ошибка при удалении файла')
@@ -75,7 +76,7 @@ export const AddPost = () => {
         title,
         tags: tags.split(',').filter(t => ((t.indexOf(' ') === -1) && (t.indexOf(',') === -1))), // исключаю теги с лишней ',' и пробелом
         text,
-        image: imageUrl._id
+        image: imageId
       }
       if (isEditing) {
         await axios.patch(`/posts/edit/${id}`, fields)
@@ -98,7 +99,7 @@ export const AddPost = () => {
         const data = await dispatch(fetchOnePost(id)).unwrap()
         setTitle(data.title)
         setText(data.text)
-        setImageUrl(data.image)
+        setImageId(data.image)
         setTags(data.tags.join(','))
       } catch (err) {
         console.warn(err)
@@ -145,13 +146,13 @@ export const AddPost = () => {
 
   return (
     <Paper style={{ padding: 30 }}>
-      {imageUrl ? (
+      {imageId ? (
         <>
           <Button variant="contained" color="error" onClick={onClickRemoveImage}>
             Удалить
           </Button>
           <img className={styles.image}
-            src={imageUrl.data || imageUrl}
+            src={`http://localhost:4000/upload/${imageId}` || `${process.env.REACT_APP_API_URL}/${imageId}`}
             alt="Uploaded"
           />
         </>

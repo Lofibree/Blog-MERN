@@ -22,7 +22,7 @@ export const Post = ({
   title,
   createdAt,
   updatedAt,
-  imageUrl,
+  image,
   user,
   viewsCount,
   commentsCount,
@@ -89,19 +89,19 @@ export const Post = ({
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-        {imageUrl && (
+        {image && (
         <img
           className={styles.imageModal}
-          src={imageUrl}
+          src={`http://localhost:4000/upload/${image}` || `${process.env.REACT_APP_API_URL}/${image}`}
           alt={title}
         />
       )}
         </Box>
       </Modal>
-      {imageUrl && (
+      {image !== '' && (
         <img
           className={clsx(styles.image, { [styles.imageFull]: isFullPost })}
-          src={imageUrl}
+          src={`http://localhost:4000/upload/${image}` ||`${process.env.REACT_APP_API_URL}/${image}`}
           onClick={handleOpen}
           alt={title}
         /> 

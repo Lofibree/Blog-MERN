@@ -26,14 +26,18 @@ export const FullPost = () => {
   const [isLoading, setIsLoading] = useState(true)
   const dispatch = useDispatch()
 
-
+// debugger
   useEffect(() => {
     try {
       setIsLoading(true)
       dispatch(fetchOnePost(id)).unwrap().then((res) => {
-        dispatch(fetchComments(id)).then(() => { setIsLoading(false) })
+        dispatch(fetchComments(id)).then(() => {
+          // debugger
+          if (posts.items.length !== 0 ) return setIsLoading(false)
+        })
       }).then(() => {
-        setIsLoading(false)
+        // debugger
+        if (posts.items.length !== 0) return setIsLoading(false)
       }).catch(err => {
         console.warn(err)
         alert('Ошибка при получении статьи')
@@ -57,14 +61,14 @@ export const FullPost = () => {
         :
         <>
           {
-            (isPostsLoading ? [...Array(5)] : posts.items)
+            (isPostsLoading && posts.items.length === 0 ? [...Array(5)] : posts.items)
               .map((p, index) => isPostsLoading
                 ? <Post isLoading={true} key={index} />
                 :
                 <Post
                   id={p ? p._id : ''}
                   title={p ? p.title : ''}
-                  imageUrl={p && p.image ? p.image.data : ''}
+                  image={p && p.image ? p.image : ''}
                   user={p ? p.user : ''}
                   createdAt={p && p.createdAt ? p.createdAt.split('T') : ''}
                   updatedAt={p && p.updatedAt ? p.updatedAt.split('T') : ''}
@@ -72,12 +76,12 @@ export const FullPost = () => {
                   commentsCount={p ? p.commentsCount : ''}
                   tags={p ? p.tags : ''}
                   isFullPost
-                  isOnline={userData?.isOnline && userData._id === p.user._id}
+                  isOnline={userData?.isOnline && userData._id && p === p.user._id}
                 >
                   <p>{p ? p.text : ''}</p>
                 </Post>
               )}
-          <CommentsBlock items={comments.items} isLoading={isCommLoading} isFullPost>
+          <CommentsBlock items={comments && comments.items ? comments.items : ''} isLoading={isCommLoading} isFullPost>
             {isAuth && <AddComment id={id} isAuth />}
           </CommentsBlock>
         </>

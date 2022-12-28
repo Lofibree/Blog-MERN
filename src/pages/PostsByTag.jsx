@@ -48,7 +48,7 @@ export const PostsByTag = () => {
                   <Post
                     id={obj._id}
                     title={obj.title}
-                    imageUrl={obj.image ? obj.image.data : ''}
+                    image={obj.image ? obj.image : ''}
                     user={obj.user}
                     createdAt={obj.createdAt.split('T')}
                     updatedAt={obj.updatedAt.split('T')}
