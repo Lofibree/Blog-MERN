@@ -152,7 +152,9 @@ export const AddPost = () => {
             Удалить
           </Button>
           <img className={styles.image}
-            src={`http://localhost:4000/upload/${imageId}` || `${process.env.REACT_APP_API_URL}/${imageId}`}
+            src={
+              // `http://localhost:4000/upload/${imageId}` ||
+               `${process.env.REACT_APP_API_URL}/${imageId}`}
             alt="Uploaded"
           />
         </>
