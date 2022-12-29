@@ -31,13 +31,11 @@ export const FullPost = () => {
     try {
       setIsLoading(true)
       dispatch(fetchOnePost(id)).unwrap().then((res) => {
-        dispatch(fetchComments(id)).then(() => {
-          // debugger
-          if (posts.items.length !== 0 ) return setIsLoading(false)
-        })
+        dispatch(fetchComments(id))
       }).then(() => {
         // debugger
-        if (posts.items.length !== 0) return setIsLoading(false)
+        // if (posts.items.length !== 0) return 
+        setIsLoading(false)
       }).catch(err => {
         console.warn(err)
         alert('Ошибка при получении статьи')
